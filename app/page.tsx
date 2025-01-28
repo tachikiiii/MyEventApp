@@ -1,101 +1,195 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from 'react';
+import Link from 'next/link';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [events, setEvents] = useState<{ name: string; date: string; description: string; googlePhotoUrl: string; walicaUrl: string }[]>([]);
+  const [showForm, setShowForm] = useState(false);
+  const [eventDetails, setEventDetails] = useState({ name: '', date: '', description: '', googlePhotoUrl: '', walicaUrl: '' });
+  const [currentPage, setCurrentPage] = useState(0);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setEventDetails({ ...eventDetails, [name]: value });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setEvents([...events, eventDetails]);
+    setEventDetails({ name: '', date: '', description: '', googlePhotoUrl: '', walicaUrl: '' });
+    setShowForm(false);
+  };
+
+  const handleEventClick = (event: { name: string; date: string; description: string; googlePhotoUrl: string; walicaUrl: string }) => {
+    const newWindow = window.open('', '_blank');
+    if (newWindow) {
+      newWindow.document.write(`
+        <html>
+          <head>
+            <title>${event.name}</title>
+          </head>
+          <body>
+            <h1>${event.name}</h1>
+            <p><strong>Date:</strong> ${event.date}</p>
+            <p><strong>Description:</strong> ${event.description}</p>
+            <p><strong>Google Photos Album:</strong> <a href="${event.googlePhotoUrl}" target="_blank">Open Album</a></p>
+            <p><strong>Walica Bill Split:</strong> <a href="${event.walicaUrl}" target="_blank">Go to Walica</a></p>
+          </body>
+        </html>
+      `);
+    }
+  };
+
+  const eventsPerPage = 3;
+  const totalPages = Math.ceil(events.length / eventsPerPage);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages - 1) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const currentEvents = events.slice(currentPage * eventsPerPage, (currentPage + 1) * eventsPerPage);
+
+  // Google Photos Appを開くためのリンク
+  const handleOpenGooglePhotos = () => {
+    const userAgent = navigator.userAgent.toLowerCase();
+    // スマホの場合、Google Photosアプリを開く
+    if (/android|iphone|ipad|ipod/.test(userAgent)) {
+      window.location.href = 'googlephotos://'; // スマホでアプリを開く
+    } else {
+      // PCの場合、Web版Google Photosに遷移
+      window.location.href = 'https://photos.google.com'; // Web版に遷移
+    }
+  };
+
+  return (
+    <div className="container mx-auto p-4">
+      <div className="flex justify-between mb-4">
+        <button onClick={() => setShowForm(true)} className="bg-blue-500 text-white px-4 py-2 rounded">
+          Create Event
+        </button>
+        <Link href="/login" legacyBehavior>
+          <a className="bg-gray-500 text-white px-4 py-2 rounded">Login</a>
+        </Link>
+      </div>
+
+      {showForm && (
+        <form onSubmit={handleSubmit} className="mt-4">
+          <div className="mb-4">
+            <label className="block text-gray-700">Event Name</label>
+            <input
+              type="text"
+              name="name"
+              value={eventDetails.name}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded"
+              required
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Event Date</label>
+            <input
+              type="date"
+              name="date"
+              value={eventDetails.date}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Description</label>
+            <textarea
+              name="description"
+              value={eventDetails.description}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded"
+              required
+            ></textarea>
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Google Photos Album URL</label>
+            <input
+              type="url"
+              name="googlePhotoUrl"
+              value={eventDetails.googlePhotoUrl}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded"
+              required
+            />
+            <button
+              type="button"
+              onClick={handleOpenGooglePhotos}
+              className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
+            >
+              Open Google Photos App
+            </button>
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Walica URL</label>
+            <input
+              type="url"
+              name="walicaUrl"
+              value={eventDetails.walicaUrl}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded"
+              required
+            />
+          </div>
+          <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded">
+            Submit
+          </button>
+        </form>
+      )}
+
+      <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+        {currentEvents.map((event, index) => (
+          <div
+            key={index}
+            className="relative h-48 md:h-64 aspect-w-4 aspect-h-3 border rounded overflow-hidden bg-cover bg-center text-white cursor-pointer"
+            style={{ backgroundImage: 'url("/background.png")' }}
+            onClick={() => handleEventClick(event)}
           >
-            Read our docs
-          </a>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="bg-white py-12 px-20 rounded shadow-lg text-center">
+                <h2 className="text-xl font-bold text-black">{event.name}</h2>
+                <hr className="w-full border-black my-2" />
+                <p className="text-black">{event.date}</p>
+                <button onClick={handleOpenGooglePhotos} className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
+                  Open Google Photos
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {events.length > eventsPerPage && (
+        <div className="mt-4 flex justify-between items-center">
+          <button
+            onClick={handlePrevPage}
+            disabled={currentPage === 0}
+            className="bg-gray-500 text-white px-4 py-2 rounded disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <button
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages - 1}
+            className="bg-gray-500 text-white px-4 py-2 rounded disabled:opacity-50"
+          >
+            Next
+          </button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      )}
     </div>
   );
 }
