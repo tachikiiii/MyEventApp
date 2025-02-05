@@ -27,8 +27,18 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {/* ヘッダー画像 */}
+        <header className="header-container">
+          <img
+            src="/header.png"
+            alt="Header Image"
+            className="header-image"
+          />
+        </header>
+
         {children}
       </body>
     </html>
   );
 }
+  
