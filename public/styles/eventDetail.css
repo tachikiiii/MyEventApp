@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 常に使用する背景色と文字色 */
+:root {
+  --background: #de7a22;  /* 背景色 */
+  --foreground: #333;     /* 文字色 */
+  --alert-color: red;     /* アラートメッセージの色 */
+}
+
+/* ユーティリティクラスのカスタム設定 */
+@layer utilities {
+  .slide-left {
+    transform: translateX(-100%);
+  }
+  .slide-right {
+    transform: translateX(100%);
+  }
+}
+
+/* bodyのスタイル */
+body {
+  color: var(--foreground);  /* 文字色 */
+  background: var(--background);  /* 背景色 */
+  font-family: Arial, Helvetica, sans-serif;  /* フォント設定 */
+  margin: 0;
+  padding: 20px;
+}
+
+/* イベント詳細エリア */
+#eventDetail {
+  background-color: white;  /* 白い背景 */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+/* イベントタイトル */
+h1 {
+  font-size: 2rem;
+  color: var(--foreground);
+  margin-bottom: 10px;
+}
+
+/* イベントの説明 */
+p {
+  font-size: 1.2rem;
+  color: var(--foreground);
+  margin-bottom: 10px;
+}
+
+/* アラートメッセージ */
+.alert-message {
+  color: var(--alert-color);
+  font-weight: bold;
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+}
+
+/* リンクスタイル */
+a {
+  color: #007BFF;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Google PhotosとWalicaのリンク */
+#googlePhoto a,
+#walicaUrl a {
+  color: #007BFF;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+#googlePhoto a:hover,
+#walicaUrl a:hover {
+  text-decoration: underline;
+}
+
+/* ボタン共通スタイル */
+.btn {
+  background-color: #007BFF;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
