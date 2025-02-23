@@ -47,19 +47,19 @@ export default function Home() {
   // 並べ替え順序の状態
   const [sortOrder, setSortOrder] = useState('date');
   // 参加者リストの状態
-  const [participants, setParticipants] = useState<string[]>([]);
+  // const [participants, setParticipants] = useState<string[]>([]);
 
   // ページロード時にlocalStorageからデータを読み込む
   useEffect(() => {
     const storedEvents = JSON.parse(localStorage.getItem('events') || '[]');
-    const storedParticipants = JSON.parse(localStorage.getItem('participants') || '[]');
+    // const storedParticipants = JSON.parse(localStorage.getItem('participants') || '[]');
 
     if (storedEvents.length > 0) {
       setEvents(storedEvents);
     }
-    if (storedParticipants.length > 0) {
-      setParticipants(storedParticipants);
-    }
+    // if (storedParticipants.length > 0) {
+    //   setParticipants(storedParticipants);
+    // }
   }, []);
 
   // 並べ替え処理（sortOrderが"date"の場合は日付昇順、"newest"の場合は作成日の降順）
